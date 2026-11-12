@@ -1,0 +1,45 @@
+Oilsjt · Aalst Free Roam
+
+Map data © OpenStreetMap contributors, available under ODbL 1.0.
+https://www.openstreetmap.org/copyright
+https://opendatacommons.org/licenses/odbl/1-0/
+The geographic dataset used by the game is bundled in city.js.
+
+Elevation © Digitaal Vlaanderen, Digitaal Hoogtemodel Vlaanderen II.
+One-metre DTM and DSM via https://geo.api.vlaanderen.be/DHMV/wcs
+https://www.vlaanderen.be/digitaal-vlaanderen/onze-diensten-en-platformen/het-digitaal-hoogtemodel/digitaal-hoogtemodel-vlaanderen-ii
+
+Dender water levels and bridge clearances from De Vlaamse Waterweg.
+https://www.visuris.be/download/1dbbb84d-efbe-4131-af4e-60901bb4100f?dl=0
+https://www.vlaamsewaterweg.be/nl/projecten/nieuwe-stuw-en-sluis-aalst
+
+Architecture and landmarks
+https://www.visit-aalst.be/nl/zien-doen/bezienswaardigheden/het-belfort
+https://www.visit-aalst.be/nl/zien-doen/bezienswaardigheden/stadhuis-en-landhuis
+https://www.visit-aalst.be/nl/zien-doen/bezienswaardigheden/de-sint-martinuskerk
+https://www.visit-aalst.be/nl/zien-doen/bezienswaardigheden/het-station
+https://inventaris.onroerenderfgoed.be/erfgoedobjecten/174
+https://inventaris.onroerenderfgoed.be/erfgoedobjecten/31
+https://inventaris.onroerenderfgoed.be/erfgoedobjecten/227
+https://inventaris.onroerenderfgoed.be/erfgoedobjecten/168
+https://www.toekomstparochiekerken.be/media/270/download?inline=
+https://zalenzoeker.aalst.be/vind-een-zaal/cinema/cinema
+https://tereosaalst.be/contact/
+https://www.azorg.be/nl/praktisch/aalst-moorselbaan
+https://www.azorg.be/nl/praktisch/aalst-merestraat
+https://academiebeeldendekunsten.aalst.be/praktisch
+
+https://www.visit-aalst.be/nl/zien-doen/bezienswaardigheden/standbeelden-monumenten
+https://erfgoedceldenderland.be/sites/default/files/attachments/2019-08/Herdenken_in_Denderland_low_website_met_cover.pdf
+
+Street furniture, storefronts, bridge structures, roofs, traffic, and landscaping are stylized.
+Traffic simulation follows mapped road classes and one-way tags and uses illustrative signal timing.
+Three.js is distributed under the MIT License. See THREE-LICENSE.txt.
+
+CC0 model assets
+Kenney Car Kit 3.1: https://kenney.nl/assets/car-kit
+Kenney City Kit Roads 2.2: https://kenney.nl/assets/city-kit-roads
+Downloaded from the creator's OpenGameArt listings; original license files in assets/.
+Selected OBJ meshes were converted to local vertex-colored geometry.
+Belfort and Dirk Martens: user photo references, OSM footprint and https://inventaris.onroerenderfgoed.be/erfgoedobjecten/44
+Grote Markt rosette: mapped grass footprint and user-supplied historic reference (classic layout).

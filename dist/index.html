@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="nl-BE">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oilsjt • Aalst Free Roam</title>
+<meta name="description" content="Verken Aalst te voet, met de fiets of met de auto.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="world" aria-label="3D-zicht op Aalst"></main>
+<div class="vignette"></div>
+<header class="hud top">
+  <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 26 14 6h4l9 20h-6l-5-12-5 12z" fill="currentColor"/><path d="M13 25h6l-3-6z" fill="#192321"/></svg><div><strong>OILSJT</strong><small>VRIJ ROND IN OILSJT</small></div></div>
+  <div class="actions">
+    <time id="clock" class="game-clock" aria-label="Speltijd">13:00</time>
+    <button id="day" title="Dag en nacht wisselen (T)" aria-label="Dag en nacht wisselen">☀</button>
+    <button id="sound" title="Motorgeluid aan of uit" aria-label="Motorgeluid aan of uit">♫</button>
+    <button id="help" title="Pauze en bediening (Esc)" aria-label="Pauze en bediening">Ⅱ</button>
+  </div>
+</header>
+<aside id="place" class="hud location" aria-live="polite"><small>● &nbsp; AALST CENTRUM</small><strong id="street">Grote Markt</strong><span id="landmark">Grote Markt • Het Belfort</span><span id="zone" hidden></span></aside>
+<aside id="objective" class="hud objective"><small>VRIJ ROND</small><strong id="task">Ontdek Oilsjt</strong><span id="hint">Bezoek de herkenningspunten</span><div id="progress"></div></aside>
+<div id="toast" role="status"></div>
+<aside class="hud map">
+  <div class="maphead"><strong>STADSPLAN</strong><button id="maptoggle" title="Stadsplan vergroten (M)" aria-label="Stadsplan vergroten">↗</button></div>
+  <div id="map-search" hidden><input type="search" id="place-query" aria-label="Zoek een plek in Aalst" placeholder="Zoek een plek in Aalst"><ul id="place-results" aria-label="Gevonden plekken"></ul></div>
+  <canvas id="map" width="250" height="186" aria-label="Minikaart van Aalst"></canvas>
+  <div class="mapfoot"><span><i></i> HERKENNINGSPUNT</span></div>
+</aside>
+<aside class="hud speed"><div><span id="speed">00</span><small id="unit">KM/H</small></div><strong id="mode">AUTO</strong></aside>
+<footer><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors · ODbL</a><span> · </span><a href="https://www.vlaanderen.be/digitaal-vlaanderen/onze-diensten-en-platformen/het-digitaal-hoogtemodel/digitaal-hoogtemodel-vlaanderen-ii" target="_blank" rel="noopener">Hoogtedata © Digitaal Vlaanderen</a></footer>
+<div class="touch" aria-label="Aanraakbediening"><div><button data-key="KeyA" aria-label="Links">◀</button><button data-key="KeyD" aria-label="Rechts">▶</button></div><button id="touch-mode" aria-label="Auto of fiets in- of uitstappen">E</button><div><button data-key="KeyS" aria-label="Remmen of achteruit">▼</button><button data-key="KeyW" aria-label="Gas geven">▲</button></div></div>
+<section id="intro" class="intro" aria-labelledby="title">
+  <div class="panel">
+    <div class="tag"><i></i> AALST, OOST-VLAANDEREN</div>
+    <h1 id="title">Oilsjt</h1>
+    <button id="start" disabled>Oilsjt laden…</button>
+    <div class="controls">
+      <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>Lopen / rijden</span></div>
+      <div><kbd>SPACE</kbd><span>Handrem</span></div>
+      <div><kbd>E</kbd><span>Auto / fiets in- of uitstappen</span></div>
+      <div><kbd>M</kbd><span>Stadsplan</span></div>
+      <div><kbd>R</kbd><span>Terug naar het startpunt</span></div>
+      <div><kbd>C</kbd><span>Camera / eerste persoon</span></div>
+    </div>
+  </div>
+</section>
+<script type="module" src="game.js"></script>
+</body>
+</html>
