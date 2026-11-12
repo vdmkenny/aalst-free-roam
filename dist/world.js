@@ -723,6 +723,13 @@ function subtractRoadFootprints(triangle){
     for(let z=Math.floor(Math.min(...zs)/24);z<=Math.floor(Math.max(...zs)/24);z++){
       for(const s of roads.cells.get(x+','+z)||[])if(!s.f.b)candidates.add(s);
       for(const s of railCuts.cells.get(x+','+z)||[])candidates.add(s);
+      // Narrow open ditches can fall entirely between terrain-grid vertices.
+      // Cut their mapped bank footprint so coarse ground cannot cover the water.
+      for(const s of waterways.cells.get(x+','+z)||[])if(s.a&&s.f?.c==='ditch'){
+        const nx=s.dz/s.length*(s.width/2+1.3),nz=-s.dx/s.length*(s.width/2+1.3);
+        s.terrainCut??={cutPoly:[[s.a[0]+nx,s.a[1]+nz],[s.b[0]+nx,s.b[1]+nz],[s.b[0]-nx,s.b[1]-nz],[s.a[0]-nx,s.a[1]-nz]]};
+        candidates.add(s.terrainCut);
+      }
       for(const s of parkingTerrainCuts.cells.get(x+','+z)||[])candidates.add(s);
       for(const s of stationWalls.cells.get(x+','+z)||[]){s.cutSurface??=(s.f.n==='Brusselse steenweg'||s.f.concreteReturn)?{wallCut:true,cutPoly:[[s.a[0]-s.nx*12,s.a[1]-s.nz*12],[s.b[0]-s.nx*12,s.b[1]-s.nz*12],[s.b[0]+s.nx*2.1,s.b[1]+s.nz*2.1],[s.a[0]+s.nx*2.1,s.a[1]+s.nz*2.1]]}:{wallCut:true,cutPoly:[[s.a[0]-s.nx*2.1,s.a[1]-s.nz*2.1],[s.b[0]-(s.nxB??s.nx)*2.1,s.b[1]-(s.nzB??s.nz)*2.1],[s.b[0]+(s.nxB??s.nx)*2.1,s.b[1]+(s.nzB??s.nz)*2.1],[s.a[0]+s.nx*2.1,s.a[1]+s.nz*2.1]]};candidates.add(s.cutSurface);}
       for(const s of retainingAprons.cells.get(x+','+z)||[])candidates.add(s);
@@ -1093,18 +1100,18 @@ function buildMedians(scene){
   const draw=(a,b,ya,yb,width,f)=>{
     if(Math.hypot(b[0]-a[0],b[1]-a[1])<.1)return;
     prism(concrete,a,b,width,ya+.20,yb+.20,.20,'#b5b8b4');
-    const plantedMedian=/Capucienenlaan|Béthunelaan/.test(f.n||'')&&width>1.2;
+    const plantedMedian=/Capucienenlaan|Béthunelaan|Zwembadlaan/.test(f.n||'')&&width>1.2;
     ribbon(pavers,a,b,Math.max(.1,width/2-.13),ya+.205,yb+.205,plantedMedian?'#70804e':'#90968e');
     if(plantedMedian){
       const x=(a[0]+b[0])/2,z=(a[1]+b[1])/2;
       const crossing=(city.crossing||[]).some(q=>Math.hypot(q.p[0]-x,q.p[1]-z)<9);
       if(!crossing&&!medianVegetation.some(q=>Math.hypot(q.p[0]-x,q.p[1]-z)<10))
-        medianVegetation.push({p:[x,z],h:10+pick(x+z,8)*3,kind:'tree',median:true});
+        medianVegetation.push({p:[x,z],h:(f.n==='Zwembadlaan'?13:10)+pick(x+z,8)*3,kind:'tree',median:true});
     }
     const s=segment(a,b,f,width);s.ya=ya;s.yb=yb;register(medians,s,width+1);count++;
   };
   for(const f of city.road){
-    if(!['primary','secondary','trunk'].includes(f.c)||f.b||f.u)continue;
+    if((!['primary','secondary','trunk'].includes(f.c)&&f.n!=='Zwembadlaan')||f.b||f.u)continue;
     const nodes=nodesForLine(f.p,lineProfile(f,.135));
     // A third lane with only one through lane in each direction is the
     // mapped separation strip; turn lanes remain available at junctions.
