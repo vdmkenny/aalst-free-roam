@@ -1,3 +1,4 @@
+import {installTouchControls} from './touch-controls.js';
 import {createStationScreens} from './station-screens.js';
 import {solarPosition,brusselsMinutes} from './solar-time.js';
 import {disposeScene} from './dispose-scene.js';
@@ -165,7 +166,7 @@ const playerShirt='#6d8b72';
 const player=personModel(playerShirt,true);
 player.g.visible=true;
 const spawn=new URLSearchParams(location.search).has('leopoldqa')?{x:759,z:-510,a:.3}:new URLSearchParams(location.search).has('haringqa')?{x:-546,z:1130,a:-.4}:new URLSearchParams(location.search).has('junctionqa')?{x:877,z:538,a:.12}:{x:-239,z:3,a:-1.93};
-const state={...spawn,v:0,y:surface(spawn.x,spawn.z),driving:false,cycling:false,camera:0};
+const state={...spawn,v:0,y:surface(spawn.x,spawn.z),driving:false,cycling:false,camera:0,lookYaw:0,lookPitch:0};
 const parked={...spawn};
 const starterVisual=car.g;
 vehicleFleet.register({id:'starter',kind:'car',model:'sedan',tint:'#d9a94b',...spawn,y:state.y},hidden=>{starterVisual.visible=!hidden;});
@@ -406,7 +407,7 @@ function toggleMap(){
   $('map').parentElement.classList.toggle('expanded',mapOpen);
   $('maptoggle').textContent=mapOpen?'↙':'↗';
   $('maptoggle').setAttribute('aria-expanded',String(mapOpen));
-  keys.clear();
+  keys.clear();touchInput.clear();
   drawMap();
 }
 function togglePause(){
@@ -417,7 +418,7 @@ function togglePause(){
   intro.hidden=!paused;
   document.body.classList.toggle('menu',paused);
   $('help').setAttribute('aria-label',paused?'Verder spelen':'Pauze en bediening');
-  keys.clear();
+  keys.clear();touchInput.clear();
 }
 function blocked(x,z,previousY,radius=.55){
   if(!inside(x,z,5)) return true;
@@ -485,7 +486,8 @@ $('help').addEventListener('click',togglePause);
 $('day').addEventListener('click',toggleDay);
 $('sound').addEventListener('click',toggleSound);
 $('maptoggle').addEventListener('click',toggleMap);
-$('touch-mode').addEventListener('click',switchMode);
+function cycleCamera(){state.lookYaw=0;state.lookPitch=0;state.camera=(state.camera+1)%4;notify(['Volgcamera','Brede camera','Hoge camera','Eerste persoon'][state.camera]);}
+const touchInput=installTouchControls({keys,active:()=>started&&!paused&&!mapOpen,look:(dx,dy)=>{state.lookYaw-=dx*.006;state.lookPitch=clamp(state.lookPitch+dy*.006,-.7,.7);},action:name=>({vehicle:switchMode,camera:cycleCamera,map:toggleMap,reset})[name]?.()});
 window.addEventListener('keydown',e=>{
   if(e.target===$('place-query')&&e.code!=='Escape')return;
   const k=aliases[e.code]||e.code;
@@ -498,15 +500,11 @@ window.addEventListener('keydown',e=>{
   keys.add(k);
   if(k==='KeyE')switchMode();
   if(k==='KeyR')reset();
-  if(k==='KeyC'){state.camera=(state.camera+1)%4;notify(['Volgcamera','Brede camera','Hoge camera','Eerste persoon'][state.camera]);}
+  if(k==='KeyC')cycleCamera();
   if(k==='KeyT')toggleDay();
 });
 window.addEventListener('keyup',e=>keys.delete(aliases[e.code]||e.code));
 window.addEventListener('blur',()=>keys.clear());
-for(const b of document.querySelectorAll('[data-key]')){
-  b.addEventListener('pointerdown',e=>{b.setPointerCapture(e.pointerId);keys.add(b.dataset.key);});
-  for(const ev of ['pointerup','lostpointercapture','pointercancel'])b.addEventListener(ev,()=>keys.delete(b.dataset.key));
-}
 function move(dt){
   const previousAngle=state.a;
   const turn=Number(keys.has('KeyA'))-Number(keys.has('KeyD'));
@@ -789,7 +787,7 @@ function updateHUD(){
   const near=nearest(roads,state.x,state.z);
   $('street').textContent=(near?.d<28&&near.f.n)||(state.x>690&&state.z<450?'Mijlbeek':'Aalst');
   $('mode').textContent=state.cycling?'FIETS':state.driving?'AUTO':'TE VOET';
-  $('touch-mode').textContent=state.driving?'Uitstappen (E)':'Instappen (E)';
+  $('touch-mode').textContent=state.driving||state.cycling?'Uitstappen':'Instappen';
   $('zone').textContent=near?.d<near.width*.6?({pedestrian:'Pedestrian zone',cycleway:'Cycle path'}[near.f.c]||''):'';
   $('zone').hidden=!$('zone').textContent;
   $('speed').textContent=String(Math.round(Math.abs(state.v)*3.6)).padStart(2,'0');
@@ -815,16 +813,16 @@ function updateCamera(dt,t){
     camera.lookAt(-274, height(-274,-27)+11,-26);
     view.copy(camera.position);look.set(-274,height(-274,-27)+11,-26);
   }else if(firstPerson){
-    const {x,z,a,y}=state,fx=Math.sin(a),fz=Math.cos(a);
+    const {x,z,a,y}=state,fx=Math.sin(a+state.lookYaw),fz=Math.cos(a+state.lookYaw);
     const eye=state.driving?1.32:1.68;
     camera.position.set(x,y+eye,z);
-    camera.lookAt(x+fx*20,y+eye-.15,z+fz*20);
-    view.copy(camera.position);look.set(x+fx*20,y+eye-.15,z+fz*20);
+    camera.lookAt(x+fx*20,y+eye-.15-state.lookPitch*20,z+fz*20);
+    view.copy(camera.position);look.set(x+fx*20,y+eye-.15-state.lookPitch*20,z+fz*20);
   }else{
     const {x,z,a,y}=state;
     const dist=state.camera===2?7.6:state.camera===1?12.5:state.driving?8.3:4.5;
     const lift=state.camera===2?13.5:state.camera===1?6:state.driving?4.1:2.85;
-    const fx=Math.sin(a),fz=Math.cos(a);
+    const fx=Math.sin(a+state.lookYaw),fz=Math.cos(a+state.lookYaw);
     let cx=x-fx*dist,cz=z-fz*dist;
     for(let k=1;k<6;k++){
       const t=k/5,px=x+(cx-x)*t,pz=z+(cz-z)*t;
@@ -833,7 +831,7 @@ function updateCamera(dt,t){
         break;
       }
     }
-    const desired=new T.Vector3(cx,Math.max(y+lift,groundHeight(cx,cz)+2.3),cz);
+    const desired=new T.Vector3(cx,Math.max(y+lift+state.lookPitch*6,groundHeight(cx,cz)+2.3),cz);
     if(view.distanceTo(desired)>45)view.copy(desired);
     else view.lerp(desired,1-Math.exp(-dt*9.4));
     look.lerp(new T.Vector3(x+fx*(state.driving?4.7:1.7),y+(state.driving?1.16:1.42),z+fz*(state.driving?4.7:1.7)),1-Math.exp(-dt*11));

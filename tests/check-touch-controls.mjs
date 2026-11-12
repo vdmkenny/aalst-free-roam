@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import {touchHolds} from '../dist/touch-controls.js';
+const keys=new Set(),holds=touchHolds(keys);
+holds.press(1,'KeyW');holds.press(2,'KeyA');assert(keys.has('KeyW')&&keys.has('KeyA'));
+holds.release(2);assert(keys.has('KeyW')&&!keys.has('KeyA'));
+holds.press(3,'KeyW');holds.release(1);assert(keys.has('KeyW'));
+holds.release(3);assert.equal(keys.size,0);
+holds.release(3);assert.equal(keys.size,0);
+holds.press(4,'Space');holds.press(5,'KeyW');holds.clear();assert.equal(keys.size,0);
+holds.release(4);holds.press(6,'KeyD');assert(keys.has('KeyD'));holds.clear();
+console.log('Simultaneous controls, duplicate fingers, cancellation, clearing and reuse pass');
+const {installTouchControls}=await import('../dist/touch-controls.js');
+class Element extends EventTarget{constructor(dataset={}){super();this.dataset=dataset;this.classList={add(){},remove(){}};}setPointerCapture(){} }
+const forward=new Element({key:'KeyW'}),left=new Element({key:'KeyA'}),camera=new Element({action:'camera'}),view=new Element(),root=new Element();
+root.querySelectorAll=q=>q==='[data-key]'?[forward,left]:q==='[data-action]'?[camera]:[];
+globalThis.window=new EventTarget();globalThis.document=new EventTarget();document.querySelector=q=>q==='.touch'?root:view;
+let enabled=true,action='',motion=[0,0];const input=installTouchControls({keys,active:()=>enabled,action:a=>action=a,look:(x,y)=>motion=[x,y]});
+const fire=(el,type,props={})=>{const e=new Event(type,{cancelable:true});Object.assign(e,props);el.dispatchEvent(e);};
+fire(forward,'pointerdown',{pointerId:1,button:0});fire(left,'pointerdown',{pointerId:2,button:0});assert.equal(keys.size,2);
+fire(left,'pointercancel',{pointerId:2});assert(keys.has('KeyW')&&!keys.has('KeyA'));
+fire(view,'pointerdown',{pointerId:3,pointerType:'touch',clientX:50,clientY:60});fire(view,'pointermove',{pointerId:3,clientX:70,clientY:55});assert.deepEqual(motion,[20,-5]);
+fire(window,'blur');assert.equal(keys.size,0);fire(view,'pointermove',{pointerId:3,clientX:90,clientY:80});assert.deepEqual(motion,[20,-5]);
+fire(camera,'click');assert.equal(action,'camera');enabled=false;fire(forward,'pointerdown',{pointerId:4,button:0});assert.equal(keys.size,0);input.clear();
+console.log('Pointer wiring, swipe deltas, blur cleanup and menu gating pass');

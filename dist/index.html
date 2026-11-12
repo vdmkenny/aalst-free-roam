@@ -2,7 +2,7 @@
 <html lang="nl-BE">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Oilsjt • Aalst Free Roam</title>
 <meta name="description" content="Verken Aalst te voet, met de fiets of met de auto.">
 <link rel="stylesheet" href="style.css">
@@ -30,12 +30,17 @@
 </aside>
 <aside class="hud speed"><div><span id="speed">00</span><small id="unit">KM/H</small></div><strong id="mode">AUTO</strong></aside>
 <footer><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors · ODbL</a><span> · </span><a href="https://www.vlaanderen.be/digitaal-vlaanderen/onze-diensten-en-platformen/het-digitaal-hoogtemodel/digitaal-hoogtemodel-vlaanderen-ii" target="_blank" rel="noopener">Hoogtedata © Digitaal Vlaanderen</a></footer>
-<div class="touch" aria-label="Aanraakbediening"><div><button data-key="KeyA" aria-label="Links">◀</button><button data-key="KeyD" aria-label="Rechts">▶</button></div><button id="touch-mode" aria-label="Auto of fiets in- of uitstappen">E</button><div><button data-key="KeyS" aria-label="Remmen of achteruit">▼</button><button data-key="KeyW" aria-label="Gas geven">▲</button></div></div>
+<nav class="touch" aria-label="Aanraakbediening">
+ <div class="touch-steer"><button data-key="KeyA" aria-label="Links sturen">◀</button><button data-key="KeyD" aria-label="Rechts sturen">▶</button></div>
+ <div class="touch-tools"><button id="touch-mode" data-action="vehicle" aria-label="Auto of fiets in- of uitstappen">Instappen</button><button data-action="camera" aria-label="Camera wisselen">Camera</button><button data-action="map" aria-label="Kaart openen">Kaart</button><button data-action="reset" aria-label="Terug naar start">Terug</button></div>
+ <div class="touch-drive"><button data-key="Space" aria-label="Handrem">Rem</button><button data-key="ShiftLeft" aria-label="Hardlopen">Sprint</button><button data-key="KeyS" aria-label="Achteruit">▼</button><button data-key="KeyW" aria-label="Vooruit">▲</button></div>
+</nav>
 <section id="intro" class="intro" aria-labelledby="title">
   <div class="panel">
     <div class="tag"><i></i> AALST, OOST-VLAANDEREN</div>
     <h1 id="title">Oilsjt</h1>
     <button id="start" disabled>Oilsjt laden…</button>
+    <p class="touch-help">Stuur links, loop of geef gas rechts. Swipe om rond te kijken. Tik op Instappen bij een vrije auto of fiets.</p>
     <div class="controls">
       <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>Lopen / rijden</span></div>
       <div><kbd>SPACE</kbd><span>Handrem</span></div>
