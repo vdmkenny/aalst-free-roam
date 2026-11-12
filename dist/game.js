@@ -10,7 +10,7 @@ import {streamingBenchmark} from './streaming-benchmark.js';
 import {angleDelta} from './npc-steering.js';
 import {buildRoadControls,signFactor,legalSpeed} from './npc-road-rules.js';
 import {buildNavigation,NpcNavigation} from './npc-navigation.js';
-import {hullBlocked,sweepMove,vehicleMoveBlocked,vehicleOverlap} from './movement-collision.js';
+import {hullBlocked,sweepMove,vehicleMoveBlocked,vehicleOverlap,shouldYieldSpace} from './movement-collision.js';
 import {prepareDistanceDetail} from './distance-detail.js';
 import {vehicleModel,carPaints} from './cc0-assets.js';
 import {T,city,stationPlatforms,box,Hash,clamp,pick,inside,height,groundHeight,surface,waterCrossing,railHeight,signalPhase,trafficSignalControls,wet,buildingAt,roads,nearest,isPath,roadWidth,makeWorldAsync,landmarks} from './world.js';
@@ -593,7 +593,7 @@ function actors(t,dt){
     const obstacles=neighborAgents.slice();
     if(started){obstacles.push(...claimedObstacles);if(starterObstacle)obstacles.push(starterObstacle);}
     let lawFactor=Math.min(trafficYield(u,v,angle,y,t),signFactor(n,roadControls.get(n.x,n.z),neighborAgents,dt));
-    const reservation=junctionReservations.gate(n,navigation,neighborAgents,lawFactor>.95);
+    const reservation=junctionReservations.gate(n,navigation,neighborAgents,lawFactor>.95&&!n.pendingStop);
     // Once admitted, clear the junction even if the light changes during a turn.
     if(reservation.committed)lawFactor=1;
     const factor=Math.min(following,playerFactor,lawFactor,reservation.factor);
@@ -609,14 +609,17 @@ function actors(t,dt){
       moved=-reverse;n.retreatLeft-=reverse;
       if(reverse===0||n.retreatLeft<.02){n.retreatLeft=0;n.giveSpace=2;n.stalled=0;}
     }else if(!n.giveSpace){moved=navigation.advance(n,dt*speed*factor,(p,from)=>!vehicleMoveBlocked(from,p,obstacles));}
-    n.stalled=lawFactor>.95&&n.route.length&&Math.abs(moved)<dt*.1?(n.stalled||0)+dt:0;
+    n.stationary=n.route.length&&Math.abs(moved)<dt*.1?(n.stationary||0)+dt:0;
+    n.stalled=lawFactor>.95?n.stationary:0;
     n.detourClock=(n.detourClock||0)+dt;
     if(n.detourClock>15&&!reservation.committed){if(n.route.slice(n.edgeIndex+1).some(e=>navigation.graph.congestion.has(e.way)))navigation.requestDetour(n);n.detourClock=0;}
-    if(n.stalled>8&&!n.recoveryCooldown){
+    if(n.stationary>8&&!n.recoveryCooldown){
       n.recoveryCooldown=15; // Rate-limit all recovery attempts, even when reversing is impossible.
-      const trapped=neighbors.some(b=>b.nav.id<n.id&&(b.nav.stalled||0)>5&&Math.hypot(b.nav.x-n.x,b.nav.z-n.z)<9&&(Math.abs(Math.sin(b.nav.a-n.a))>.4||Math.cos(b.nav.a-n.a)<-.5));
+      const trapped=neighbors.some(b=>{const other=b.nav,otherOwns=junctionReservations.locks.some(l=>l.id===other.id);
+        return shouldYieldSpace(n,other,reservation.committed,otherOwns,navigation.pose(other,.4));
+      });
       if(trapped&&n.along>.5){n.retreatLeft=Math.min(3,n.along-.02);n.recoveryCooldown=25;}
-      if(!reservation.committed)navigation.requestDetour(n);n.detourClock=0;
+      if(n.stalled>8&&!reservation.committed)navigation.requestDetour(n);n.detourClock=0;
     }
     n.speed=dt>0?moved/dt:0;
     a.g.visible=Math.hypot(n.x-camera.position.x,n.z-camera.position.z)<430;

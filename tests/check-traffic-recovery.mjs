@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {shouldYieldSpace} from '../dist/movement-collision.js';
+const a={id:1,x:0,z:0,y:0,a:0,stationary:10},b={id:2,x:0,z:4.3,y:0,a:Math.PI,stationary:10};
+assert(shouldYieldSpace(a,b,false,true,{...b,z:3.9}),'red-light waiter yields to physically blocked committed car');
+assert(!shouldYieldSpace(b,a,true,false,{...a,z:.4}),'committed car retains priority');
+assert(!shouldYieldSpace(a,{...b,stationary:1},false,true,{...b,z:3.9}),'moving traffic never triggers recovery');
+assert(!shouldYieldSpace(a,{...b,a:0},false,true,{...b,z:3.9}),'ordinary same-lane queue does not reverse');
+assert(!shouldYieldSpace(a,{...b,x:4},false,true,{...b,x:4,z:3.9}),'unobstructed signal waiter does not reverse');
+assert(shouldYieldSpace(b,a,false,false,{...a,z:.4}),'stable ID resolves unreserved stalemate');
+console.log('Physical stalemate priority and normal signal queues pass');

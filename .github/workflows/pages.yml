@@ -23,6 +23,8 @@ jobs:
           node-version: '22'
       - name: Check JavaScript syntax
         run: for file in dist/*.js; do node --check "$file" || exit 1; done
+      - name: Check traffic rules and junction flow
+        run: for file in tests/*.mjs; do node "$file" || exit 1; done
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

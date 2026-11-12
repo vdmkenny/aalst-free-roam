@@ -13,7 +13,7 @@ export function buildRoadControls(city){
 }
 export function signFactor(agent,controls,others,dt){
   const fx=Math.sin(agent.a),fz=Math.cos(agent.a);let factor=1;
-  agent.signStops??=new Map();
+  agent.signStops??=new Map();agent.pendingStop=false;
   for(const sign of controls){
     const dx=sign.p[0]-agent.x,dz=sign.p[1]-agent.z,d=Math.hypot(dx,dz);
     if(d>35){agent.signStops.delete(sign.id);continue;}
@@ -28,7 +28,7 @@ export function signFactor(agent,controls,others,dt){
     if(sign.c==='stop'&&!state.done){
       if(ahead<=4.6&&(agent.speed||0)<.25)state.held+=dt;
       if(state.held>=1.2)state.done=true;
-      else factor=Math.min(factor,Math.max(0,Math.min(1,(ahead-4.4)/12)));
+      else {agent.pendingStop=true;factor=Math.min(factor,Math.max(0,Math.min(1,(ahead-4.4)/12)));}
     }
     if(conflict)factor=Math.min(factor,Math.max(0,Math.min(1,(ahead-4.4)/12)));
     else if(sign.c==='give_way'&&ahead>4.4)factor=Math.min(factor,.55);

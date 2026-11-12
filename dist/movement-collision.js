@@ -39,3 +39,11 @@ export function vehicleMoveBlocked(from,to,others){
     return after>1e-6&&after>=vehicleOverlap(from,other)-1e-6;
   });
 }
+
+// Only the lower-priority member of a physical stalemate backs out. Signal
+// waiting counts as stationary too; an ordinary red-light queue is untouched.
+export function shouldYieldSpace(a,b,owns,otherOwns,nextOther){
+ const yields=otherOwns&&!owns||otherOwns===owns&&b.id<a.id;
+ return yields&&(b.stationary||0)>5&&Math.hypot(b.x-a.x,b.z-a.z)<9&&
+  (Math.abs(Math.sin(b.a-a.a))>.4||Math.cos(b.a-a.a)<-.5)&&vehicleMoveBlocked(b,nextOther,[a]);
+}
