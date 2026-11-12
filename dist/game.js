@@ -787,7 +787,9 @@ function updateHUD(){
   const near=nearest(roads,state.x,state.z);
   $('street').textContent=(near?.d<28&&near.f.n)||(state.x>690&&state.z<450?'Mijlbeek':'Aalst');
   $('mode').textContent=state.cycling?'FIETS':state.driving?'AUTO':'TE VOET';
-  $('touch-mode').textContent=state.driving||state.cycling?'Uitstappen':'Instappen';
+  const aboard=state.driving||state.cycling;
+  $('touch-mode').setAttribute('aria-label',aboard?'Uitstappen':'Auto of fiets instappen');
+  $('touch-mode').classList.toggle('aboard',aboard);
   $('zone').textContent=near?.d<near.width*.6?({pedestrian:'Pedestrian zone',cycleway:'Cycle path'}[near.f.c]||''):'';
   $('zone').hidden=!$('zone').textContent;
   $('speed').textContent=String(Math.round(Math.abs(state.v)*3.6)).padStart(2,'0');

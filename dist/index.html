@@ -19,11 +19,12 @@
     <button id="help" title="Pauze en bediening (Esc)" aria-label="Pauze en bediening">Ⅱ</button>
   </div>
 </header>
-<aside id="place" class="hud location" aria-live="polite"><small>● &nbsp; AALST CENTRUM</small><strong id="street">Grote Markt</strong><span id="landmark">Grote Markt • Het Belfort</span><span id="zone" hidden></span></aside>
+
 <aside id="objective" class="hud objective"><small>VRIJ ROND</small><strong id="task">Ontdek Oilsjt</strong><span id="hint">Bezoek de herkenningspunten</span><div id="progress"></div></aside>
 <div id="toast" role="status"></div>
 <aside class="hud map">
   <div class="maphead"><strong>STADSPLAN</strong><button id="maptoggle" title="Stadsplan vergroten (M)" aria-label="Stadsplan vergroten">↗</button></div>
+  <div id="place" class="hud location" aria-live="polite"><small>● &nbsp; AALST CENTRUM</small><strong id="street">Grote Markt</strong><span id="landmark">Grote Markt • Het Belfort</span><span id="zone" hidden></span></div>
   <div id="map-search" hidden><input type="search" id="place-query" aria-label="Zoek een plek in Aalst" placeholder="Zoek een plek in Aalst"><ul id="place-results" aria-label="Gevonden plekken"></ul></div>
   <canvas id="map" width="250" height="186" aria-label="Minikaart van Aalst"></canvas>
   <div class="mapfoot"><span><i></i> HERKENNINGSPUNT</span></div>
@@ -32,15 +33,16 @@
 <footer><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors · ODbL</a><span> · </span><a href="https://www.vlaanderen.be/digitaal-vlaanderen/onze-diensten-en-platformen/het-digitaal-hoogtemodel/digitaal-hoogtemodel-vlaanderen-ii" target="_blank" rel="noopener">Hoogtedata © Digitaal Vlaanderen</a></footer>
 <nav class="touch" aria-label="Aanraakbediening">
  <div class="touch-steer"><button data-key="KeyA" aria-label="Links sturen">◀</button><button data-key="KeyD" aria-label="Rechts sturen">▶</button></div>
- <div class="touch-tools"><button id="touch-mode" data-action="vehicle" aria-label="Auto of fiets in- of uitstappen">Instappen</button><button data-action="camera" aria-label="Camera wisselen">Camera</button><button data-action="map" aria-label="Kaart openen">Kaart</button><button data-action="reset" aria-label="Terug naar start">Terug</button></div>
- <div class="touch-drive"><button data-key="Space" aria-label="Handrem">Rem</button><button data-key="ShiftLeft" aria-label="Hardlopen">Sprint</button><button data-key="KeyS" aria-label="Achteruit">▼</button><button data-key="KeyW" aria-label="Vooruit">▲</button></div>
+ <div class="touch-tools"><button id="touch-mode" data-action="vehicle" aria-label="Auto of fiets in- of uitstappen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H5v18h9M10 12h11m-4-4 4 4-4 4"/></svg></button><button data-action="camera" aria-label="Camera wisselen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h5l2-3h4l2 3h5v13H3z"/><circle cx="12" cy="13" r="4"/></svg></button><button data-action="map" aria-label="Kaart openen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2zm6-2v16m6-14v16"/></svg></button><button data-action="reset" aria-label="Terug naar start"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg></button></div>
+ <div class="touch-drive"><button data-key="Space" aria-label="Handrem"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M3 5a11 11 0 0 0 0 14M21 5a11 11 0 0 1 0 14M12 8v5m0 3h.01"/></svg></button><button data-key="ShiftLeft" aria-label="Hardlopen"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="4" r="2"/><path d="m7 11 3-4 4 2 3 4h4M14 9l-3 6-5 6m5-6 6 2 1 5M2 7h4M1 12h4"/></svg></button><button data-key="KeyS" aria-label="Achteruit">▼</button><button data-key="KeyW" aria-label="Vooruit">▲</button></div>
 </nav>
 <section id="intro" class="intro" aria-labelledby="title">
   <div class="panel">
     <div class="tag"><i></i> AALST, OOST-VLAANDEREN</div>
     <h1 id="title">Oilsjt</h1>
     <button id="start" disabled>Oilsjt laden…</button>
-    <p class="touch-help">Stuur links, loop of geef gas rechts. Swipe om rond te kijken. Tik op Instappen bij een vrije auto of fiets.</p>
+    <p class="touch-help">Swipe om rond te kijken. Stap in bij een vrije auto of fiets.</p>
+    <div class="touch-legend" aria-label="Aanraakbediening"><div><kbd aria-hidden="true">◀ ▶</kbd><span>Sturen</span></div><div><kbd aria-hidden="true">▲ ▼</kbd><span>Lopen / gas / achteruit</span></div><div><kbd><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H5v18h9M10 12h11m-4-4 4 4-4 4"/></svg></kbd><span>In- / uitstappen</span></div><div><kbd><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h5l2-3h4l2 3h5v13H3z"/><circle cx="12" cy="13" r="4"/></svg></kbd><span>Camera wisselen</span></div><div><kbd><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2zm6-2v16m6-14v16"/></svg></kbd><span>Stadsplan</span></div><div><kbd><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg></kbd><span>Terug naar start</span></div><div><kbd><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M3 5a11 11 0 0 0 0 14M21 5a11 11 0 0 1 0 14M12 8v5m0 3h.01"/></svg></kbd><span>Handrem</span></div><div><kbd><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="4" r="2"/><path d="m7 11 3-4 4 2 3 4h4M14 9l-3 6-5 6m5-6 6 2 1 5M2 7h4M1 12h4"/></svg></kbd><span>Hardlopen</span></div></div>
     <div class="controls">
       <div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>Lopen / rijden</span></div>
       <div><kbd>SPACE</kbd><span>Handrem</span></div>
